@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  chat:
+    build: ./chat
+    container_name: utah-tourism-chat
+    env_file:
+      - .env
+    environment:
+      # URL to reach Crawl4AI *from inside* the chat container
+      CRAWL4AI_BASE: http://crawl4ai:11235
+    ports:
+      - "8000:8000"   # FastAPI exposed on localhost:8000
+    depends_on:
+      - crawl4ai
+
+  crawl4ai:
+    image: unclecode/crawl4ai:latest
+    container_name: crawl4ai
+    # If you later want LLM-powered extraction inside Crawl4AI,
+    # you can add a .llm.env similar to their docs and mount it here.
+    # env_file:
+    #   - .llm.env
+    ports:
+      - "11235:11235"   # Optional: expose for debugging / playground
+    shm_size: "1g"
